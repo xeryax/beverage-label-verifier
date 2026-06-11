@@ -4,12 +4,12 @@
 
 - Docker 24+ with Compose v2
 - For Swarm deploy: external `traefik-hub` overlay network
-- ~4 GB RAM for OCR model load
+- ~2 GB RAM available for the container (1.5 GB limit configured)
 
 ## Local development
 
 ```bash
-git clone <repo-url> && cd ttb
+git clone <repo-url> && cd <repo>
 docker compose up --build
 ```
 
@@ -21,7 +21,8 @@ Environment variables (optional, see `.env.example`):
 | Variable | Default | Purpose |
 |---|---|---|
 | `TTB_HOST` | `localhost` | Documented hostname for deploy docs |
-| `TTB_WORKERS` | `4` | Batch OCR thread pool size |
+| `TTB_WORKERS` | `1` | Batch OCR thread pool size (keep at 1 on small hosts) |
+| `OMP_NUM_THREADS` | `1` | Limits Tesseract/OpenBLAS thread fan-out |
 
 ## Docker Swarm + Traefik (test environment)
 
@@ -58,7 +59,7 @@ Any Docker host:
 
 ```bash
 docker build -t ttb-label-verifier .
-docker run -p 8000:8000 --memory=4g ttb-label-verifier
+docker run -p 8000:8000 --memory=1536m ttb-label-verifier
 ```
 
 Push to your registry and run on Kubernetes, ECS, etc. — single container, no external dependencies.
@@ -68,14 +69,17 @@ Push to your registry and run on Kubernetes, ECS, etc. — single container, no 
 | Issue | Fix |
 |---|---|
 | First request slightly slower | Tesseract warm-up on startup; subsequent requests typically 2–5s |
-| OOM during build/run | Allocate ≥4 GB RAM; models need ~2 GB peak |
-| 502 from Traefik | Wait for healthcheck `start-period` (120s) after deploy |
+| OOM during run | Do not raise `TTB_WORKERS` above 1 on memory-constrained hosts; keep 1.5 GB limit |
+| 502 from Traefik | Wait for healthcheck `start-period` (30s) after deploy |
 | Poor OCR on photos | Expected for glare/angle; use flat COLA artwork scans when possible |
 
 ## Evaluation
 
+Requires local `test images/` (not in repository):
+
 ```bash
+pip install requests
 python scripts/evaluate.py --base-url http://localhost:8000
 ```
 
-Requires `requests` (`pip install requests`).
+Use `--limit 5` to run a subset before a full benchmark.

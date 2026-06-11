@@ -1,0 +1,14 @@
+Copyright (c) 2026. All Rights Reserved.
+
+This repository and its contents are proprietary. Unauthorized copying,
+modification, distribution, sublicensing, or use of this software or
+documentation, in whole or in part, is prohibited without prior written
+permission from the copyright holder.
+
+This repository is published for evaluation purposes only (e.g. technical
+interview review). No license is granted to reuse, fork, or redistribute
+this work for other projects.
+
+Third-party components retain their respective licenses. External test images
+under `test images/external/javieravitia/` (when present locally) are
+MIT-licensed from JavierAvitia/ai-ttb-label-verifier.
