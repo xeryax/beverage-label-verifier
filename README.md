@@ -24,7 +24,7 @@ Regulatory rules are grounded in [TTB Labeling Resources](https://www.ttb.gov/re
 | Overall | Meaning |
 |---------|---------|
 | **pass** | All checked fields matched within threshold |
-| **review** | Likely OK but needs human eyes (low OCR confidence, optional beer/wine fields absent, producer not found, etc.) |
+| **review** | Likely OK but needs human eyes (low OCR confidence, bottle photos, optional beer/wine fields absent, etc.) |
 | **fail** | Clear mismatch (e.g. wrong ABV, title-case warning header, garbled warning on photo) |
 
 Roll-up rule: any field **fail** → overall fail; else any **review** → overall review; else pass.
@@ -36,7 +36,7 @@ Roll-up rule: any field **fail** → overall fail; else any **review** → overa
 | Brand, class, producer, country | RapidFuzz; case-insensitive; warning text stripped from search haystack |
 | Alcohol content | Parsed % vs application; tolerance by beverage type |
 | Net contents | Volume + unit regex match |
-| Government warning | Body fuzzy match + ALL CAPS header (16.21); flat-artwork CV for bold/size heuristics (16.22) |
+| Government warning | Body fuzzy match + ALL CAPS header (27 CFR § 16.21) |
 
 Beer: ABV, producer, and country are surfaced as **review** when absent (optional for many malt beverages). Wine: table wine may omit ABV in the application — flagged **review**, not fail.
 
@@ -87,8 +87,8 @@ python scripts/batch_load_test.py --count 300 --chunk-size 50   # proxy/browser 
 - **Application data is provided** by the agent (JSON per image or CSV manifest). The tool compares image ↔ form; it does not replace COLA.
 - **Standalone POC** — no live COLA integration, auth, or document retention.
 - **English labels** only; TTB mandatory fields per 27 CFR parts 4, 5, 7, and 16.
-- **OCR limits:** We verify warning *wording* and ALL CAPS header where readable; we cannot verify bold, minimum type size, or placement (27 CFR 16.22).
-- **Flat artwork** is the design center; bottle photos may be slower and less accurate.
+- **Government warning:** automated checks cover § 16.21 wording and ALL CAPS header where OCR can read the label. § 16.22 formatting (bold, minimum type size, placement) requires agent visual review and is not part of the 27-case eval.
+- **Flat COLA artwork** is the design center — see Trade-offs and limitations for bottle photos.
 - **Evaluation harness** (`scripts/evaluate.py`) expects local test images and ground truth — not shipped in this repository (see `.gitignore`).
 
 ## Quick start
@@ -148,8 +148,8 @@ We reviewed public implementations before building:
 ## Trade-offs and limitations
 
 - Large batches (200–300) complete in minutes, not seconds; use chunked uploads (~50) through the browser if a proxy times out
-- Warning **bold** and relative type size are heuristic on flat artwork only; photos still need agent visual check (27 CFR 16.22)
-- Photo labels on curved bottles may exceed 5s and degrade accuracy vs flat COLA scans
+- **OCR and image quality:** The 27-case benchmark targets flat COLA artwork. Bottle photos (angle, glare, curvature) break line-based Tesseract; low-confidence reads route to **review** with an explicit `imageQualityNote` rather than guessing — the same fallback agents use when they ask for a better image. **Why photos fail:** Tesseract assumes flat, horizontal text lines; curved labels and glare defeat that model. **Deferred production path:** keep Tesseract as the fast default (~2–5s, firewall-safe, ~1.5 GB RAM); escalate low-confidence photo reads to **GPU-accelerated neural OCR** (EasyOCR or PaddleOCR) in a separate worker — detection-based models handle curvature and glare far better. Out of scope for this prototype (Jenny Park’s “maybe out of scope” note in the brief); requires relaxing the 5-second budget or async fallback processing.
+- **§ 16.22 formatting:** Bold, minimum type size, and placement are not automated compliance checks. Optional experimental stroke/height notes may append to the warning field on flat artwork; agents still verify formatting visually.
 - No COLA system integration
 - Sulfite declaration and age statement supported in matcher but not in the core seven-field UI
 - Benchmark test images are not included in the repository

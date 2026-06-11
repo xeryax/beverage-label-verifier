@@ -29,6 +29,7 @@ class VerifyResponse(BaseModel):
     processingTimeMs: int
     ocrConfidence: float
     fields: dict[str, FieldResultSchema]
+    imageQualityNote: Optional[str] = None
     error: Optional[str] = None
 
 
@@ -39,6 +40,7 @@ class BatchItemResult(BaseModel):
     processingTimeMs: int
     ocrConfidence: float
     fields: dict[str, Any] = Field(default_factory=dict)
+    imageQualityNote: Optional[str] = None
     error: Optional[str] = None
 
 

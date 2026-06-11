@@ -135,7 +135,7 @@ export default function App() {
             >
               Drag & drop label images here, or click to browse
               <br />
-              <span className="muted">PNG or JPG — multiple files supported</span>
+              <span className="muted">PNG or JPG — flat COLA artwork works best; bottle photos may need manual review</span>
             </div>
             <input
               id="file-input"
@@ -171,6 +171,11 @@ export default function App() {
                     <Badge status={r.overall} />
                     <span className="muted">{r.processingTimeMs}ms · OCR {Math.round((r.ocrConfidence || 0) * 100)}%</span>
                   </div>
+                  {r.imageQualityNote && (
+                    <p className="muted" style={{ marginTop: "0.5rem", color: "var(--review)" }}>
+                      {r.imageQualityNote}
+                    </p>
+                  )}
                   <div className="field-grid">
                     {FIELD_ORDER.filter((f) => r.fields?.[f]).map((field) => {
                       const info = r.fields[field];

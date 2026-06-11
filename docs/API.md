@@ -41,9 +41,12 @@ Verify a single label image.
   "fields": {
     "Brand Name": { "status": "pass", "detected": "OLD TOM", "expected": "...", "score": 92, "notes": "..." }
   },
+  "imageQualityNote": null,
   "error": null
 }
 ```
+
+When the image looks like a bottle photo and OCR confidence is low, `imageQualityNote` explains that automated verification is unreliable and flat COLA artwork is preferred. The overall verdict may be elevated to `review` when the only failures are unreadable fields (no confident mismatches).
 
 **Verdict rollup:**
 

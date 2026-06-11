@@ -73,6 +73,12 @@ def _is_flat_artwork(bgr: np.ndarray) -> bool:
     return float(gray.std()) >= 48.0 and max(h, w) / max(min(h, w), 1) < 2.8
 
 
+def _is_bottle_photo(bgr: np.ndarray) -> bool:
+    """Landscape product shots — used for review routing only, not OCR path selection."""
+    h, w = bgr.shape[:2]
+    return w > h * 1.12
+
+
 def _run_tesseract(gray: np.ndarray) -> tuple[list[str], list[float], list[dict]]:
     """Return lines, per-line confidence (0–1), and word bounding boxes."""
     data = pytesseract.image_to_data(
@@ -127,6 +133,7 @@ def extract_text(
     t0 = time.perf_counter()
     bgr = _to_cv2(image)
     flat = _is_flat_artwork(bgr)
+    photo = _is_bottle_photo(bgr)
 
     words: list[dict] = []
     if skip_preprocess:
@@ -168,6 +175,7 @@ def extract_text(
         "raw_results": list(zip(lines, confs)),
         "words": words,
         "flat_artwork": flat,
+        "bottle_photo": photo,
         "gray": gray if flat else None,
     }
 

@@ -1,4 +1,4 @@
-"""27 CFR § 16.22 style heuristics for flat artwork (bold header, relative type size).
+"""Experimental § 16.22 style notes for flat artwork (not a benchmarked compliance check).
 
 Uses Tesseract word bounding boxes from the primary OCR pass — no extra
 Tesseract invocation. Skipped on bottle photos (unreliable perspective/glare).

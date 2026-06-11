@@ -9,7 +9,24 @@ from typing import Any, Optional
 
 from PIL import Image
 
-from constants import CORE_FIELD_NAMES, GOVERNMENT_WARNING_TEXT, STATUS_MATCH, STATUS_MISMATCH, STATUS_NOT_FOUND, STATUS_REVIEW
+from constants import (
+    CORE_FIELD_NAMES,
+    GOVERNMENT_WARNING_TEXT,
+    STATUS_MATCH,
+    STATUS_MISMATCH,
+    STATUS_NOT_FOUND,
+    STATUS_REVIEW,
+    VERDICT_APPROVE,
+    VERDICT_REJECT,
+    VERDICT_REVIEW,
+)
+
+_PHOTO_LOW_CONF = 0.58
+_PHOTO_MIN_LINES = 10
+_PHOTO_REVIEW_MSG = (
+    "Image appears to be a bottle photo with low OCR confidence. "
+    "Automated verification is unreliable — use flat COLA artwork or verify manually."
+)
 from matcher import FieldResult, extract_fields, overall_verdict, validate_fields
 from ocr import extract_text
 from rules import application_to_expected, normalize_beverage_type
@@ -130,6 +147,28 @@ def _apply_warning_style_fields(
     ]
 
 
+def _apply_unreadable_photo_gate(
+    overall: str,
+    fields: list[FieldResult],
+    ocr: dict,
+) -> tuple[str, Optional[str]]:
+    """Route low-yield bottle photos to review instead of OCR guesswork."""
+    if not ocr.get("bottle_photo"):
+        return overall, None
+    avg = float(ocr.get("avg_confidence") or 0)
+    line_count = len(ocr.get("lines") or [])
+    unreadable = avg < _PHOTO_LOW_CONF or line_count < _PHOTO_MIN_LINES
+    if not unreadable:
+        return overall, None
+    note = _PHOTO_REVIEW_MSG
+    # Keep fail when OCR surfaced a clear field mismatch — only soften unreadable rejects.
+    if any(f.status == STATUS_MISMATCH for f in fields):
+        return overall, note
+    if overall in (VERDICT_REJECT, VERDICT_APPROVE):
+        return VERDICT_REVIEW, note
+    return overall, note
+
+
 def _ensure_core_fields(fields: list[FieldResult], expected: dict) -> list[FieldResult]:
     by_name = {f.field_name: f for f in fields}
     out = []
@@ -154,6 +193,7 @@ def verify_image(image_bytes: bytes, application: dict) -> dict[str, Any]:
     fields = [f for f in fields if f.field_name in CORE_FIELD_NAMES]
 
     overall = overall_verdict(fields)
+    overall, image_note = _apply_unreadable_photo_gate(overall, fields, ocr)
     elapsed_ms = int((time.perf_counter() - t0) * 1000)
 
     return {
@@ -161,5 +201,6 @@ def verify_image(image_bytes: bytes, application: dict) -> dict[str, Any]:
         "processingTimeMs": elapsed_ms,
         "ocrConfidence": round(ocr["avg_confidence"], 2),
         "fields": {fr.field_name: _field_to_api(fr, ocr["full_text"]) for fr in fields},
+        "imageQualityNote": image_note,
         "error": None,
     }

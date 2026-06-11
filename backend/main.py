@@ -66,6 +66,7 @@ async def api_verify(
             "processingTimeMs": 0,
             "ocrConfidence": 0.0,
             "fields": {},
+            "imageQualityNote": None,
             "error": str(exc),
         }
 
@@ -98,6 +99,7 @@ def _verify_one(filename: str, data: bytes, app_row: dict[str, str]) -> dict[str
             "processingTimeMs": 0,
             "ocrConfidence": 0.0,
             "fields": {},
+            "imageQualityNote": None,
             "error": str(exc),
         }
 
