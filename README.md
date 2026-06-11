@@ -136,10 +136,7 @@ We reviewed public implementations before building:
 
 ## License
 
-**Copyright (c) 2026. All Rights Reserved.**
-
-This repository is provided for evaluation purposes only. Unauthorized copying,
-modification, distribution, or reuse is prohibited without written permission.
-See [LICENSE](LICENSE).
+**All rights reserved.** This repository is shared for evaluation purposes.
+Please do not reuse or redistribute without permission. See [LICENSE](LICENSE).
 
 Third-party test images from [JavierAvitia/ai-ttb-label-verifier](https://github.com/JavierAvitia/ai-ttb-label-verifier) (when used locally) remain under their MIT license.
