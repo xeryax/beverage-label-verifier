@@ -13,6 +13,7 @@ from constants import CORE_FIELD_NAMES, GOVERNMENT_WARNING_TEXT, STATUS_MATCH, S
 from matcher import FieldResult, extract_fields, overall_verdict, validate_fields
 from ocr import extract_text
 from rules import application_to_expected, normalize_beverage_type
+from warning_style import analyze_warning_style, apply_warning_style
 
 
 def _status_to_api(status: str) -> str:
@@ -111,6 +112,24 @@ def _pad_beer_optional_fields(
     return out
 
 
+def _apply_warning_style_fields(
+    fields: list[FieldResult],
+    ocr: dict,
+    expected: dict,
+) -> list[FieldResult]:
+    if not ocr.get("flat_artwork") or ocr.get("gray") is None:
+        return fields
+    style = analyze_warning_style(
+        ocr["gray"],
+        ocr.get("words") or [],
+        net_contents=expected.get("net_contents") or "",
+    )
+    return [
+        apply_warning_style(fr, style) if fr.field_name == "Government Warning" else fr
+        for fr in fields
+    ]
+
+
 def _ensure_core_fields(fields: list[FieldResult], expected: dict) -> list[FieldResult]:
     by_name = {f.field_name: f for f in fields}
     out = []
@@ -131,6 +150,7 @@ def verify_image(image_bytes: bytes, application: dict) -> dict[str, Any]:
     fields = validate_fields(extracted, expected)
     fields = _pad_beer_optional_fields(fields, extracted, expected)
     fields = _ensure_core_fields(fields, expected)
+    fields = _apply_warning_style_fields(fields, ocr, expected)
     fields = [f for f in fields if f.field_name in CORE_FIELD_NAMES]
 
     overall = overall_verdict(fields)

@@ -36,7 +36,7 @@ Roll-up rule: any field **fail** → overall fail; else any **review** → overa
 | Brand, class, producer, country | RapidFuzz; case-insensitive; warning text stripped from search haystack |
 | Alcohol content | Parsed % vs application; tolerance by beverage type |
 | Net contents | Volume + unit regex match |
-| Government warning | Body fuzzy match + ALL CAPS header check (27 CFR § 16.21) |
+| Government warning | Body fuzzy match + ALL CAPS header (16.21); flat-artwork CV for bold/size heuristics (16.22) |
 
 Beer: ABV, producer, and country are surfaced as **review** when absent (optional for many malt beverages). Wine: table wine may omit ABV in the application — flagged **review**, not fail.
 
@@ -66,7 +66,7 @@ Measured on this host with `docker compose` (1.5 GB memory limit, `TTB_WORKERS=1
 | First `/api/verify` after container restart | **2,929 ms** `processingTimeMs` (under 5s budget) |
 | Second `/api/verify` (warm) | **2,826 ms** |
 | 27-case benchmark (`scripts/evaluate.py`) | **27/27** correct, ~2.5s p50 |
-| 300-image batch (single request) | **300** per-image results, correct filename mapping, **~14.6 min** wall time, **~80 MiB** peak RAM |
+| 300-image batch (single request) | **300** per-image results, correct filename mapping, **~14.7 min** wall time, **~173 MiB** peak RAM |
 | 300-image batch (6×50 chunked) | Same 300-row validation, **~14.5 min** total |
 
 The **5-second stakeholder budget applies per label**, not to an entire batch. At ~2.9s/label sequential OCR, 300 labels take ~15 minutes — expected for a single-worker, memory-capped container.
@@ -148,7 +148,7 @@ We reviewed public implementations before building:
 ## Trade-offs and limitations
 
 - Large batches (200–300) complete in minutes, not seconds; use chunked uploads (~50) through the browser if a proxy times out
-- OCR cannot verify warning **bold**, font size, or placement (27 CFR 16.22)
+- Warning **bold** and relative type size are heuristic on flat artwork only; photos still need agent visual check (27 CFR 16.22)
 - Photo labels on curved bottles may exceed 5s and degrade accuracy vs flat COLA scans
 - No COLA system integration
 - Sulfite declaration and age statement supported in matcher but not in the core seven-field UI

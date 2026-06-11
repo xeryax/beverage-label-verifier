@@ -73,14 +73,15 @@ def _is_flat_artwork(bgr: np.ndarray) -> bool:
     return float(gray.std()) >= 48.0 and max(h, w) / max(min(h, w), 1) < 2.8
 
 
-def _run_tesseract(gray: np.ndarray) -> tuple[list[str], list[float]]:
-    """Return lines and per-line confidence estimates (0–1)."""
+def _run_tesseract(gray: np.ndarray) -> tuple[list[str], list[float], list[dict]]:
+    """Return lines, per-line confidence (0–1), and word bounding boxes."""
     data = pytesseract.image_to_data(
         gray,
         output_type=pytesseract.Output.DICT,
         config="--oem 1 --psm 6",
     )
     lines_map: dict[tuple[int, int], list[tuple[str, float]]] = {}
+    words: list[dict] = []
     n = len(data["text"])
     for i in range(n):
         text = (data["text"][i] or "").strip()
@@ -89,6 +90,17 @@ def _run_tesseract(gray: np.ndarray) -> tuple[list[str], list[float]]:
         conf = float(data["conf"][i])
         if conf < 0:
             continue
+        w = int(data["width"][i])
+        h = int(data["height"][i])
+        if w > 0 and h > 0:
+            words.append({
+                "text": text,
+                "left": int(data["left"][i]),
+                "top": int(data["top"][i]),
+                "width": w,
+                "height": h,
+                "conf": conf / 100.0,
+            })
         key = (data["block_num"][i], data["line_num"][i])
         lines_map.setdefault(key, []).append((text, conf / 100.0))
 
@@ -103,7 +115,7 @@ def _run_tesseract(gray: np.ndarray) -> tuple[list[str], list[float]]:
             continue
         lines.append(line)
         confs.append(avg)
-    return lines, confs
+    return lines, confs, words
 
 
 def extract_text(
@@ -116,17 +128,18 @@ def extract_text(
     bgr = _to_cv2(image)
     flat = _is_flat_artwork(bgr)
 
+    words: list[dict] = []
     if skip_preprocess:
         gray = cv2.cvtColor(bgr, cv2.COLOR_BGR2GRAY)
-        lines, confs = _run_tesseract(gray)
+        lines, confs, words = _run_tesseract(gray)
     else:
         gray = preprocess(image)
-        lines, confs = _run_tesseract(gray)
+        lines, confs, words = _run_tesseract(gray)
         if multi_pass:
             seen = {l.lower() for l in lines}
             if not flat:
                 gray2 = cv2.cvtColor(bgr, cv2.COLOR_BGR2GRAY)
-                lines2, confs2 = _run_tesseract(gray2)
+                lines2, confs2, _ = _run_tesseract(gray2)
                 for line, conf in zip(lines2, confs2):
                     if line.lower() not in seen:
                         lines.append(line)
@@ -153,6 +166,9 @@ def extract_text(
         "avg_confidence": avg,
         "processing_time": time.perf_counter() - t0,
         "raw_results": list(zip(lines, confs)),
+        "words": words,
+        "flat_artwork": flat,
+        "gray": gray if flat else None,
     }
 
 

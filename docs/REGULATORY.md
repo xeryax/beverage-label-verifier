@@ -14,10 +14,16 @@ Required on all alcohol beverages ≥0.5% ABV. Exact text per 27 CFR § 16.21:
 - `GOVERNMENT WARNING` header in ALL CAPS
 - Title-case header → **fail** (16.21 violation)
 
-**We cannot verify via OCR:**
+**We verify via flat-artwork CV** (Tesseract word boxes + OpenCV stroke metrics; skipped on bottle photos):
 
-- Bold header / non-bold body (16.22)
-- Minimum type size by container volume (1/2/3 mm)
+- Header stroke weight vs body → **review** if header does not appear bold relative to body
+- Warning type height vs net-contents text on the same image → **review** if ratio suggests undersized type
+- Inconclusive on photos → agent visual check (unchanged)
+
+**We cannot fully automate:**
+
+- Bold / font size on curved or glare-heavy photos
+- Absolute millimeter type size without print metadata
 - Contrasting background, separate-and-apart placement
 
 ## Mandatory fields by beverage type
