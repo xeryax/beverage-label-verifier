@@ -119,19 +119,22 @@ async def api_batch(
     except json.JSONDecodeError as exc:
         raise HTTPException(400, "Invalid application JSON") from exc
 
-    jobs = []
+    results: list[dict[str, Any]] = []
+    processing_ms = 0
     for img in images:
         data = await img.read()
-        row = by_file.get(img.filename, default_app)
-        jobs.append((img.filename or "unknown", data, row))
-
-    futures = [_executor.submit(_verify_one, fn, data, row) for fn, data, row in jobs]
-    results = [f.result() for f in futures]
+        filename = img.filename or "unknown"
+        row = by_file.get(filename, default_app)
+        future = _executor.submit(_verify_one, filename, data, row)
+        result = future.result()
+        results.append(result)
+        processing_ms += int(result.get("processingTimeMs") or 0)
+        del data
 
     severity = {"fail": 0, "review": 1, "pass": 2}
     results.sort(key=lambda r: (severity.get(r.get("overall", "fail"), 0), r.get("filename", "")))
 
-    summary = {"total": len(results), "pass": 0, "review": 0, "fail": 0}
+    summary = {"total": len(results), "pass": 0, "review": 0, "fail": 0, "processingTimeMs": processing_ms}
     for r in results:
         summary[r.get("overall", "fail")] = summary.get(r.get("overall", "fail"), 0) + 1
 

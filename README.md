@@ -57,6 +57,31 @@ Beer: ABV, producer, and country are surfaced as **review** when absent (optiona
 Upload → OCR (Tesseract + OpenCV) → Field extraction → Fuzzy/numeric match → Results
 ```
 
+## Verified performance
+
+Measured on this host with `docker compose` (1.5 GB memory limit, `TTB_WORKERS=1`, flat COLA artwork):
+
+| Check | Result |
+|-------|--------|
+| First `/api/verify` after container restart | **2,929 ms** `processingTimeMs` (under 5s budget) |
+| Second `/api/verify` (warm) | **2,826 ms** |
+| 27-case benchmark (`scripts/evaluate.py`) | **27/27** correct, ~2.5s p50 |
+| 300-image batch (single request) | **300** per-image results, correct filename mapping, **~14.6 min** wall time, **~80 MiB** peak RAM |
+| 300-image batch (6×50 chunked) | Same 300-row validation, **~14.5 min** total |
+
+The **5-second stakeholder budget applies per label**, not to an entire batch. At ~2.9s/label sequential OCR, 300 labels take ~15 minutes — expected for a single-worker, memory-capped container.
+
+- **Browser UI:** practical for routine batches (~50 images); larger jobs use the API or `scripts/batch_load_test.py`.
+- **Batch pipeline:** images processed one at a time (no 300-image RAM buffer); response is a single JSON payload with per-image `filename`, `overall`, and `fields`.
+
+```bash
+pip install requests
+python scripts/latency_check.py --base-url http://localhost:8000 --restart
+python scripts/generate_batch_fixture.py --count 300
+python scripts/batch_load_test.py --count 300 --docker
+python scripts/batch_load_test.py --count 300 --chunk-size 50   # proxy/browser fallback
+```
+
 ## Assumptions
 
 - **Application data is provided** by the agent (JSON per image or CSV manifest). The tool compares image ↔ form; it does not replace COLA.
@@ -80,7 +105,7 @@ Open http://localhost:8000
 |---|---|
 | Sub-5s on routine flat labels | Tesseract + OpenCV preprocessing; single worker; flat artwork typically 2–5s |
 | Simple UI for agents | Three-step layout: form → upload → results; large controls, plain-language badges |
-| Batch uploads | Multi-image upload + optional CSV manifest |
+| Batch uploads (200–300) | Multi-image upload + CSV manifest; verified at 300 images with per-image results |
 | Fuzzy brand matching | RapidFuzz token_sort / partial_ratio (case/punctuation tolerant) |
 | Government warning | ALL CAPS header check + body match to 27 CFR § 16.21 text |
 | No cloud APIs | Tesseract + OpenCV run fully in-container (~1.5 GB RAM cap) |
@@ -122,6 +147,7 @@ We reviewed public implementations before building:
 
 ## Trade-offs and limitations
 
+- Large batches (200–300) complete in minutes, not seconds; use chunked uploads (~50) through the browser if a proxy times out
 - OCR cannot verify warning **bold**, font size, or placement (27 CFR 16.22)
 - Photo labels on curved bottles may exceed 5s and degrade accuracy vs flat COLA scans
 - No COLA system integration

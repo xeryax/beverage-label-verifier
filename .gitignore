@@ -2,6 +2,7 @@ internal.docker.label.instructions.md
 internal.decisions.md
 sample-data/
 test images/
+batch_test/
 
 __pycache__/
 *.py[cod]

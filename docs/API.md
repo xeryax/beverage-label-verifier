@@ -68,8 +68,16 @@ Verify multiple images. Optional CSV manifest maps `imageFile` column to per-row
 ```json
 {
   "results": [ { "filename": "...", "overall": "pass", "fields": {}, ... } ],
-  "summary": { "total": 10, "pass": 8, "review": 1, "fail": 1 }
+  "summary": { "total": 10, "pass": 8, "review": 1, "fail": 1, "processingTimeMs": 28500 }
 }
 ```
 
 Results sorted with failures first.
+
+**Behavior notes:**
+
+- **Synchronous:** the HTTP connection stays open until every image is processed; there is no streaming or job queue.
+- **Sequential OCR:** with `TTB_WORKERS=1` (default), images are verified one at a time to stay within the 1.5 GB memory cap.
+- **Large batches:** 300 flat labels take ~15 minutes at ~3s/label. Use a client timeout of at least 20 minutes (see `scripts/batch_load_test.py --timeout 1200`).
+- **Browser UI:** recommend ≤50 images per upload; larger jobs should use the API directly or chunked requests (`--chunk-size 50` in the load-test script).
+- **Per-image mapping:** each result includes `filename` (and optional `itemId` from the manifest row).

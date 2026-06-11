@@ -42,7 +42,7 @@ curl -sf -o /dev/null -w '%{http_code}\n' https://example.local/
 
 ### Traefik labels
 
-The stack file routes HTTP and HTTPS to port 8000 with `certresolver=production`. To deploy elsewhere, update the `Host()` rules in `docker-stack.yml` or set `TTB_HOST` and substitute in your templating.
+The stack file routes HTTP and HTTPS to port 8000 with `certresolver=production`. A 1200s `serversTransport` timeout is configured so 300-image batch jobs (~15 min) are not cut off by the proxy. To deploy elsewhere, update the `Host()` rules in `docker-stack.yml` or set `TTB_HOST` and substitute in your templating.
 
 Placement constraints (per internal Docker policy):
 
@@ -83,3 +83,26 @@ python scripts/evaluate.py --base-url http://localhost:8000
 ```
 
 Use `--limit 5` to run a subset before a full benchmark.
+
+## Pre-submit verification scripts
+
+Prove latency and batch-volume requirements against the **running** container (not just the README):
+
+```bash
+pip install requests
+docker compose up --build -d
+
+# Per-label latency (first request after restart + warm second request)
+python scripts/latency_check.py --base-url http://localhost:8000 --restart
+
+# Generate 300 copied test images + CSV manifest (writes batch_test/, gitignored)
+python scripts/generate_batch_fixture.py --count 300
+
+# Single 300-image batch (~15 min); records docker memory if --docker
+python scripts/batch_load_test.py --count 300 --docker
+
+# Chunked fallback (6×50) for browser/proxy limits
+python scripts/batch_load_test.py --count 300 --chunk-size 50 --docker
+```
+
+Measured on reference hardware (1.5 GB cap): first verify ~2.9s, warm ~2.8s, 300-batch peak RAM ~80 MiB, wall time ~14.6 min. See `batch_test/report.json` after a load test.
