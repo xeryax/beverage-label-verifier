@@ -1,0 +1,245 @@
+{
+  "01-domestic-bourbon-pass.png": {
+    "beverageType": "spirits",
+    "brandName": "OLD TOM DISTILLERY",
+    "classType": "Kentucky Straight Bourbon Whiskey",
+    "alcoholContent": "40% Alc./Vol. (90 Proof)",
+    "netContents": "750 mL",
+    "producer": "Old Tom Distillery, Louisville, KY",
+    "countryOfOrigin": "United States"
+  },
+  "02-domestic-bourbon-missing-abv.png": {
+    "beverageType": "spirits",
+    "brandName": "RIVERSIDE DISTILLERY",
+    "classType": "Kentucky Straight Bourbon Whiskey",
+    "alcoholContent": "45% Alc./Vol. (90 Proof)",
+    "netContents": "750 mL",
+    "producer": "Riverside Distillery, Frankfort, KY",
+    "countryOfOrigin": "United States"
+  },
+  "03-import-wine-product-of-mexico.png": {
+    "beverageType": "wine",
+    "brandName": "BEATBOX",
+    "classType": "Premium Orange Wine",
+    "alcoholContent": "",
+    "netContents": "500 mL",
+    "producer": "Beatbox Beverages LLC, Austin, TX",
+    "countryOfOrigin": "Mexico"
+  },
+  "04-import-wine-missing-country.png": {
+    "beverageType": "wine",
+    "brandName": "SIERRA VISTA",
+    "classType": "Red Table Wine",
+    "alcoholContent": "14% Alc./Vol.",
+    "netContents": "750 mL",
+    "producer": "Sierra Vista Imports, Miami, FL",
+    "countryOfOrigin": "Chile"
+  },
+  "05-domestic-beer-pass.png": {
+    "beverageType": "beer",
+    "brandName": "HARBOR LIGHT",
+    "classType": "American Lager Beer",
+    "alcoholContent": "",
+    "netContents": "12 FL OZ",
+    "producer": "",
+    "countryOfOrigin": ""
+  },
+  "06-domestic-wine-stacked-producer.png": {
+    "beverageType": "wine",
+    "brandName": "SUNSET RIDGE",
+    "classType": "Cabernet Sauvignon",
+    "alcoholContent": "13.5% Alc./Vol.",
+    "netContents": "750 mL",
+    "producer": "Sunset Ridge Winery, Napa, CA",
+    "countryOfOrigin": "United States"
+  },
+  "07-title-case-warning-fail.png": {
+    "beverageType": "spirits",
+    "brandName": "COPPER STILL",
+    "classType": "Vodka",
+    "alcoholContent": "40% Alc./Vol.",
+    "netContents": "750 mL",
+    "producer": "Copper Still LLC, Austin, TX",
+    "countryOfOrigin": "United States"
+  },
+  "08-missing-government-warning.png": {
+    "beverageType": "spirits",
+    "brandName": "LAKEVIEW",
+    "classType": "Gin",
+    "alcoholContent": "45% Alc./Vol.",
+    "netContents": "1 L",
+    "producer": "Lakeview Spirits, Seattle, WA",
+    "countryOfOrigin": "United States"
+  },
+  "09-import-spirits-pass.png": {
+    "beverageType": "spirits",
+    "brandName": "BLUE AGAVE",
+    "classType": "Tequila Blanco",
+    "alcoholContent": "40% Alc./Vol.",
+    "netContents": "750 mL",
+    "producer": "Atlantic Spirits Inc, New York, NY",
+    "countryOfOrigin": "Mexico"
+  },
+  "10-inline-colon-format.png": {
+    "beverageType": "wine",
+    "brandName": "MEADOW CREEK",
+    "classType": "Chardonnay",
+    "alcoholContent": "12% Alc./Vol.",
+    "netContents": "750 mL",
+    "producer": "Meadow Creek Cellars, Sonoma, CA",
+    "countryOfOrigin": "United States"
+  },
+  "11-table-wine-no-abv.png": {
+    "beverageType": "wine",
+    "brandName": "VALLEY TABLE",
+    "classType": "Table Wine",
+    "alcoholContent": "",
+    "netContents": "750 mL",
+    "producer": "Valley Table Winery, Paso Robles, CA",
+    "countryOfOrigin": "United States"
+  },
+  "12-import-france-pass.png": {
+    "beverageType": "wine",
+    "brandName": "CHATEAU NORD",
+    "classType": "Bordeaux Red Wine",
+    "alcoholContent": "13% Alc./Vol.",
+    "netContents": "750 mL",
+    "producer": "Euro Vintners LLC, Chicago, IL",
+    "countryOfOrigin": "France"
+  },
+  "13-missing-producer.png": {
+    "beverageType": "spirits",
+    "brandName": "GHOST BARREL",
+    "classType": "Rye Whiskey",
+    "alcoholContent": "46% Alc./Vol.",
+    "netContents": "750 mL",
+    "producer": "Ghost Barrel Distillery, Portland, OR",
+    "countryOfOrigin": "United States"
+  },
+  "14-dusty-warning-ocr-noise.png": {
+    "beverageType": "beer",
+    "brandName": "PINE TRAIL",
+    "classType": "India Pale Ale",
+    "alcoholContent": "",
+    "netContents": "12 FL OZ",
+    "producer": "Pine Trail Brewing, Denver, CO",
+    "countryOfOrigin": ""
+  },
+  "15-hard-seltzer-beer-class.png": {
+    "beverageType": "beer",
+    "brandName": "CLEAR SPRING",
+    "classType": "Hard Seltzer",
+    "alcoholContent": "5% Alc./Vol.",
+    "netContents": "12 FL OZ",
+    "producer": "Clear Spring Beverages, Austin, TX",
+    "countryOfOrigin": ""
+  },
+  "external/javieravitia/perfect_label.png": {
+    "beverageType": "beer",
+    "brandName": "STONE'S THROW IPA",
+    "classType": "IPA",
+    "alcoholContent": "",
+    "netContents": "12 fl oz",
+    "producer": "",
+    "countryOfOrigin": ""
+  },
+  "external/javieravitia/angled_glare.png": {
+    "beverageType": "beer",
+    "brandName": "STONE'S THROW IPA",
+    "classType": "IPA",
+    "alcoholContent": "",
+    "netContents": "12 fl oz",
+    "producer": "",
+    "countryOfOrigin": ""
+  },
+  "external/javieravitia/warning_violation_titlecase.png": {
+    "beverageType": "beer",
+    "brandName": "STONE'S THROW",
+    "classType": "",
+    "alcoholContent": "",
+    "netContents": "12 fl oz",
+    "producer": "",
+    "countryOfOrigin": ""
+  },
+  "external/javieravitia/brand_caps_mismatch.png": {
+    "beverageType": "beer",
+    "brandName": "STONE'S THROW",
+    "classType": "",
+    "alcoholContent": "",
+    "netContents": "12 fl oz",
+    "producer": "",
+    "countryOfOrigin": ""
+  },
+  "external/javieravitia/low_contrast.png": {
+    "beverageType": "beer",
+    "brandName": "STONE'S THROW IPA",
+    "classType": "IPA",
+    "alcoholContent": "",
+    "netContents": "12 fl oz",
+    "producer": "",
+    "countryOfOrigin": ""
+  },
+  "external/javieravitia/stylized_font.png": {
+    "beverageType": "beer",
+    "brandName": "STONE'S THROW IPA",
+    "classType": "IPA",
+    "alcoholContent": "",
+    "netContents": "12 fl oz",
+    "producer": "",
+    "countryOfOrigin": ""
+  },
+  "external/javieravitia/imported_wine.png": {
+    "beverageType": "wine",
+    "brandName": "CHÂTEAU DE LA PAIX",
+    "classType": "Bordeaux",
+    "alcoholContent": "13.5% alc/vol",
+    "netContents": "750 mL",
+    "producer": "Imported by WineCo, NY",
+    "countryOfOrigin": "France"
+  },
+  "external/javieravitia/missing_warning.png": {
+    "beverageType": "beer",
+    "brandName": "LOCAL CRAFT BEER",
+    "classType": "CRAFT BEER",
+    "alcoholContent": "",
+    "netContents": "12 fl oz",
+    "producer": "",
+    "countryOfOrigin": ""
+  },
+  "external/javieravitia/Old-Tom-Distillery-Bourbon.png": {
+    "beverageType": "spirits",
+    "brandName": "OLD TOM DISTILLERY",
+    "classType": "Kentucky Straight Bourbon Whiskey",
+    "alcoholContent": "45% Alc./Vol.",
+    "netContents": "750 mL",
+    "producer": "",
+    "countryOfOrigin": ""
+  },
+  "external/javieravitia/Old-Tom-Distillery-Bourbon-Warning.png": {
+    "beverageType": "spirits",
+    "brandName": "OLD TOM DISTILLERY",
+    "classType": "Kentucky Straight Bourbon Whiskey",
+    "alcoholContent": "45% Alc./Vol.",
+    "netContents": "750 mL",
+    "producer": "",
+    "countryOfOrigin": ""
+  },
+  "external/javieravitia/liquor-warning-visible.png": {
+    "beverageType": "spirits",
+    "brandName": "OLD TOM DISTILLERY",
+    "classType": "Kentucky Straight Bourbon Whiskey",
+    "alcoholContent": "45% Alc./Vol.",
+    "netContents": "750 mL",
+    "producer": "",
+    "countryOfOrigin": ""
+  },
+  "external/javieravitia/multiple-labels-rotated.png": {
+    "beverageType": "wine",
+    "brandName": "CHATEAU DE LA ROCHE",
+    "classType": "Cabernet Sauvignon",
+    "alcoholContent": "13.5%",
+    "netContents": "750 mL",
+    "producer": "Global Vintners Inc.",
+    "countryOfOrigin": "France"
+  }
+}

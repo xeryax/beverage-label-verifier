@@ -1,0 +1,15 @@
+services:
+  ttb:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - TTB_HOST=localhost
+      - TTB_WORKERS=1
+      - OMP_NUM_THREADS=1
+    deploy:
+      resources:
+        limits:
+          memory: 1536M
+        reservations:
+          memory: 512M

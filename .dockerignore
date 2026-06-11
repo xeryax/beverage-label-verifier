@@ -1,0 +1,10 @@
+internal.docker.label.instructions.md
+sample-data/
+test images/
+.git
+.venv
+node_modules
+frontend/node_modules
+**/__pycache__
+*.md
+!README.md
