@@ -3,7 +3,6 @@
 ## Prerequisites
 
 - Docker 24+ with Compose v2
-- For Swarm deploy: external `traefik-hub` overlay network
 - ~2 GB RAM available for the container (1.5 GB limit configured)
 
 ## Local development
@@ -24,34 +23,9 @@ Environment variables (optional, see `.env.example`):
 | `TTB_WORKERS` | `1` | Batch OCR thread pool size (keep at 1 on small hosts) |
 | `OMP_NUM_THREADS` | `1` | Limits Tesseract/OpenBLAS thread fan-out |
 
-## Docker Swarm + Traefik (test environment)
+## Production / reverse proxy
 
-DNS for `example.local` is pre-configured in the test environment — no DNS changes needed.
-
-```bash
-docker build -t ttb-label-verifier:latest .
-docker stack deploy -c docker-stack.yml ttb
-```
-
-Smoke test:
-
-```bash
-curl -sf https://example.local/health
-curl -sf -o /dev/null -w '%{http_code}\n' https://example.local/
-```
-
-### Traefik labels
-
-The stack file routes HTTP and HTTPS to port 8000 with `certresolver=production`. A 1200s `serversTransport` timeout is configured so 300-image batch jobs (~15 min) are not cut off by the proxy. To deploy elsewhere, update the `Host()` rules in `docker-stack.yml` or set `TTB_HOST` and substitute in your templating.
-
-Placement constraints (per internal Docker policy):
-
-```yaml
-placement:
-  constraints:
-    - node.labels.isolated != true
-    - node.labels.gpu != true
-```
+For HTTPS or multi-node hosts, build the image and run behind your reverse proxy (Traefik, nginx, etc.). Point the upstream to port **8000**. Large batch jobs (~300 labels) can take 15+ minutes — configure proxy timeouts accordingly.
 
 ## Generic deployment
 
@@ -70,7 +44,7 @@ Push to your registry and run on Kubernetes, ECS, etc. — single container, no 
 |---|---|
 | First request slightly slower | Tesseract warm-up on startup; subsequent requests typically 2–5s |
 | OOM during run | Do not raise `TTB_WORKERS` above 1 on memory-constrained hosts; keep 1.5 GB limit |
-| 502 from Traefik | Wait for healthcheck `start-period` (30s) after deploy |
+| 502 from reverse proxy | Wait for container health; increase proxy timeout for large batches |
 | Poor OCR on photos | Expected for glare/angle; use flat COLA artwork scans when possible |
 
 ## Evaluation

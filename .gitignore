@@ -1,5 +1,6 @@
 internal.docker.label.instructions.md
 internal.decisions.md
+docker-stack.yml
 sample-data/
 test images/
 batch_test/

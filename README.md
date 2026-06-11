@@ -49,7 +49,7 @@ Beer: ABV, producer, and country are surfaced as **review** when absent (optiona
 | Matching | RapidFuzz | Handles case/punctuation drift (e.g. `STONE'S THROW` vs `Stone's Throw`) |
 | Frontend | React + Vite | Simple agent UI; static build served by FastAPI |
 | Deploy | Docker multi-stage image | Single container, no external services |
-| Orchestration | Compose (local) + Swarm/Traefik (test) | Matches “deploy anywhere” + internal test host |
+| Orchestration | Docker Compose | Single-command local deploy; portable to any Docker host |
 
 **Why Tesseract:** Stakeholders require sub-5s turnaround and no cloud APIs. Tesseract fits firewall-safe, memory-constrained hosts (single worker, 1.5 GB cap) while meeting latency targets on flat artwork (~2–5s after warm-up).
 
@@ -109,7 +109,7 @@ Open http://localhost:8000
 | Fuzzy brand matching | RapidFuzz token_sort / partial_ratio (case/punctuation tolerant) |
 | Government warning | ALL CAPS header check + body match to 27 CFR § 16.21 text |
 | No cloud APIs | Tesseract + OpenCV run fully in-container (~1.5 GB RAM cap) |
-| Deploy anywhere | `docker-compose.yml` (generic) + `docker-stack.yml` (Traefik Swarm) |
+| Deploy anywhere | `docker-compose.yml` or `docker run` — single container, no external services |
 
 ## API
 
@@ -143,7 +143,7 @@ We reviewed public implementations before building:
 | [ryparker/excisely](https://github.com/ryparker/excisely) | Next.js + Tesseract/GCP | Stakeholder-to-feature mapping, CSV batch workflow, field-appropriate match strategies |
 | [ArkieCoder/ttb-verifier](https://github.com/ArkieCoder/ttb-verifier) | FastAPI + Ollama + AWS | API-first design, Docker multi-stage build, regulatory tolerance docs |
 
-**Differentiation:** Right-sized scope (verifier only), Tesseract for constrained hosts, reproducible eval harness, deploy-anywhere Docker (compose + Swarm/Traefik), firewall-safe local OCR, React agent UI.
+**Differentiation:** Right-sized scope (verifier only), Tesseract for constrained hosts, reproducible eval harness, deploy-anywhere Docker, firewall-safe local OCR, React agent UI.
 
 ## Trade-offs and limitations
 
