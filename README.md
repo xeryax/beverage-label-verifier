@@ -2,7 +2,7 @@
 
 AI-powered alcohol label verification prototype for TTB compliance agents. Upload label images (single or batch), compare seven mandatory fields against COLA application data, and get a color-coded pass / review / fail report in seconds.
 
-**Live (test):** https://example.local
+**Live (test):** provided in submission
 
 ## Overview
 
